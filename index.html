@@ -1,0 +1,973 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#080b18">
+<meta name="color-scheme" content="dark">
+<meta name="description" content="ETERNIA · AURORA is a local-first generative ambient instrument. Shape evolving rhythms, cosmic tones, and spacious soundscapes in your browser.">
+<meta name="application-name" content="ETERNIA · AURORA STELLAR+">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<title>ETERNIA · AURORA — Stellar+</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23080b18'/%3E%3Cpath d='M32 10l5.5 16.5L54 32l-16.5 5.5L32 54l-5.5-16.5L10 32l16.5-5.5z' fill='%23ffd18a'/%3E%3C/svg%3E">
+<style>
+:root{
+  color-scheme:dark;
+  --bg:#070914;--line:rgba(150,177,255,.2);--text:#eef2ff;--muted:#a3afd0;--dim:#8d99ba;
+  --gold:#ffd18a;--mint:#9df4d2;--blue:#88aaff;--danger:#ff8f9b;--focus:rgba(189,211,255,.6);
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth;-webkit-text-size-adjust:100%;scroll-padding-top:env(safe-area-inset-top,0px)}
+:root{padding-top:env(safe-area-inset-top,0px)}
+body{
+  margin:0;min-height:100vh;min-height:100dvh;color:var(--text);
+  font:14px/1.5 Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+  background:radial-gradient(ellipse at 15% 0%,#20264d 0,transparent 40%),radial-gradient(ellipse at 90% 25%,#123d3b 0,transparent 34%),var(--bg);
+  background-attachment:fixed;overflow-x:hidden;
+}
+body:before{
+  content:"";position:fixed;inset:0;pointer-events:none;opacity:.28;
+  background-image:radial-gradient(1px 1px at 12% 18%,#fff 99%,transparent),radial-gradient(1px 1px at 76% 22%,#fff 99%,transparent),radial-gradient(2px 2px at 42% 72%,#fff 99%,transparent),radial-gradient(1px 1px at 88% 82%,#fff 99%,transparent),radial-gradient(1px 1px at 25% 90%,#fff 99%,transparent);
+  background-size:240px 220px;
+}
+*{scrollbar-color:#46547e #0b1020}
+button,input,select{font:inherit}
+button{cursor:pointer;-webkit-tap-highlight-color:transparent}
+button:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid var(--gold);outline-offset:3px}
+::selection{background:#b9f5df;color:#07111b}
+button:disabled{cursor:not-allowed;opacity:.55}
+.btn:focus-visible{box-shadow:0 0 0 4px #88aaff22}
+.control{transition:border-color .2s,background .2s,transform .2s}
+.control:focus-within{border-color:#9db8f077;background:#101a36d9}
+.step:focus-visible{z-index:2}
+.hero h1{text-shadow:0 0 42px #9bbcff18}
+.hero:after{content:"";display:block;width:min(340px,68%);height:1px;margin:24px auto 0;background:linear-gradient(90deg,transparent,#9df4d277,#ffd18a88,transparent)}
+.toolbar,.panel,.master-panel{box-shadow:0 22px 70px #0004,inset 0 1px #ffffff08}
+.btn.primary{box-shadow:0 7px 24px #b8f4df1c}
+.btn.primary:hover{box-shadow:0 10px 30px #b8f4df35}
+@media(hover:hover){.panel:hover{border-color:#a9c0ff35}.control:hover{border-color:#9bb4ed42}}
+noscript{display:block;padding:24px;text-align:center;color:var(--gold)}
+
+.shell{width:min(1500px,100%);padding:24px;padding-left:max(24px,env(safe-area-inset-left));padding-right:max(24px,env(safe-area-inset-right));padding-bottom:max(24px,env(safe-area-inset-bottom));margin:auto;position:relative}
+.topline{display:flex;justify-content:space-between;align-items:center;gap:12px;color:var(--muted);font-size:11px;letter-spacing:.16em;text-transform:uppercase}
+.status{display:flex;align-items:center;gap:8px}
+.dot{width:7px;height:7px;border-radius:50%;background:#6c789b;box-shadow:0 0 10px currentColor;flex:none}
+.dot.live{background:var(--mint);color:var(--mint)}
+.dot.alert{background:var(--danger);color:var(--danger)}
+
+.hero{text-align:center;padding:38px 12px 28px}
+.eyebrow{color:var(--mint);letter-spacing:.28em;font-size:10px;text-transform:uppercase}
+.hero h1{margin:10px 0 6px;font-size:clamp(35px,6vw,72px);line-height:1;letter-spacing:.09em;font-weight:750;background:linear-gradient(100deg,#fff 8%,#a9c3ff 42%,#b6ffe3 75%,#ffd18a);-webkit-background-clip:text;background-clip:text;color:transparent;overflow-wrap:anywhere}
+.hero p{color:var(--muted);margin:14px auto 0;max-width:680px}
+.hero .sig{color:#e4eaff;font-size:11px;letter-spacing:.22em;margin-top:22px}
+.slash{color:var(--gold)}
+
+.toolbar,.panel,.master-panel{
+  background:linear-gradient(145deg,rgba(23,32,62,.88),rgba(8,13,29,.88));
+  border:1px solid var(--line);box-shadow:0 20px 60px #0003;
+  -webkit-backdrop-filter:blur(18px);backdrop-filter:blur(18px);border-radius:22px;
+}
+.toolbar{padding:14px;display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:space-between}
+.button-group{display:flex;flex-wrap:wrap;gap:8px}
+.btn{border:1px solid #53628c;background:#182344;color:var(--text);padding:10px 14px;min-height:40px;border-radius:12px;transition:transform .15s,border-color .15s,background .15s;font-weight:650;font-size:12px}
+.btn:hover{transform:translateY(-1px);border-color:#b7c7ff;background:#23345f}
+.btn:active{transform:translateY(0)}
+.btn.primary{background:linear-gradient(120deg,#f6d69e,#b8f4df);border:0;color:#101629;min-width:150px}
+.btn.ghost{background:transparent}
+.btn.warn{border-color:#a05b69;color:#ffc2ca}
+.mini-label{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.13em}
+
+.control-row{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin:14px 0 0}
+.control{background:#0c1228a8;border:1px solid var(--line);border-radius:16px;padding:14px;min-width:0}
+.control-head{display:flex;justify-content:space-between;align-items:baseline;gap:8px;margin-bottom:10px;font-size:12px;color:#dce4ff}
+.value{color:var(--gold);font-variant-numeric:tabular-nums;font-weight:700;text-align:right}
+.value.small{font-size:11px;font-weight:650;letter-spacing:.02em}
+.control input[type=range]{width:100%;accent-color:#b9d0ff;margin:4px 0 6px}
+.control select{width:100%;background:#111a35;color:var(--text);border:1px solid #39496e;border-radius:9px;padding:9px 8px;margin:0 0 10px}
+
+.sync-bar{margin-top:14px}
+.sync-bar strong{font-size:13px}
+.sync-bar .hint{color:var(--muted);font-size:11px;margin-top:2px;max-width:46ch}
+.switches{display:flex;flex-wrap:wrap;gap:8px 18px}
+.switchline{display:flex;align-items:center;gap:9px;color:#dce4ff;font-size:12px;min-height:32px}
+.switchline input{accent-color:var(--mint);width:16px;height:16px;margin:0}
+.switchline:has(input:disabled){opacity:.5}
+
+.dual{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:14px}
+.panel{padding:20px;min-width:0}
+.panel.star{--accent:var(--gold);--accent2:#8caeff}
+.panel.aurora{--accent:var(--mint);--accent2:#7cdbbd}
+.panel-head{display:flex;justify-content:space-between;align-items:flex-start;gap:12px}
+.panel h2{font-size:20px;margin:0;letter-spacing:.02em}
+.panel .desc{font-size:12px;color:var(--muted);margin-top:3px}
+.chip{border:1px solid var(--line);border-radius:999px;padding:5px 9px;color:var(--accent);font-size:10px;letter-spacing:.08em;text-transform:uppercase;white-space:nowrap}
+.phase{margin:18px 0 14px;padding:15px;border-radius:14px;background:linear-gradient(110deg,color-mix(in srgb,var(--accent) 12%,transparent),transparent);border:1px solid color-mix(in srgb,var(--accent) 24%,transparent)}
+.phase .small{font-size:10px;color:var(--muted);letter-spacing:.13em;text-transform:uppercase}
+.phase strong{display:block;font-size:22px;color:var(--accent);margin:3px 0}
+.phase span{color:#d9e1fa;font-size:12px}
+.phase .small span{color:inherit;font-size:inherit;font-variant-numeric:tabular-nums}
+
+.step-grid{display:grid;grid-template-columns:repeat(16,minmax(0,1fr));gap:5px;margin:18px 0 12px}
+.cell{min-width:0}
+.step{display:block;width:100%;aspect-ratio:1/1;padding:0;position:relative;min-width:0;border:1px solid #344163;background:#111a32;border-radius:7px;transition:transform .1s,box-shadow .1s,border-color .1s}
+.cell.beat .step{border-color:#4f6092;background:#141f3b}
+.step:hover{border-color:#8396c9}
+.step:after{content:"";position:absolute;inset:24%;border-radius:50%;background:#3d4b70;opacity:.7}
+.step.on:after{background:var(--accent);opacity:1;box-shadow:0 0 10px color-mix(in srgb,var(--accent) 65%,transparent)}
+.step.playing{border-color:#fff;box-shadow:0 0 0 2px var(--accent),0 0 18px color-mix(in srgb,var(--accent) 55%,transparent);transform:scale(1.07);z-index:1}
+.step-num{display:block;text-align:center;color:#8f9cc2;font-size:10px;margin-top:4px;font-variant-numeric:tabular-nums}
+.pattern-tools{display:flex;flex-wrap:wrap;gap:7px}
+.pattern-tools .btn{padding:7px 10px;min-height:34px;font-size:11px}
+.meter{height:5px;background:#202b4b;border-radius:99px;overflow:hidden;margin:15px 0 8px}
+.meter span{display:block;width:0;height:100%;background:linear-gradient(90deg,var(--accent2),var(--accent));box-shadow:0 0 12px var(--accent);transition:width .08s linear}
+.panel-foot{display:flex;justify-content:space-between;gap:10px;color:var(--dim);font-size:11px;margin-top:10px}
+
+.master-panel{margin-top:14px;padding:18px;display:grid;grid-template-columns:1fr 1.2fr;gap:18px;align-items:center}
+.visualizer{height:110px;width:100%;display:block;border-radius:12px;background:#080e20;border:1px solid var(--line)}
+.master-info h3{margin:0 0 5px;font-size:15px}
+.master-info p{margin:0;color:var(--muted);font-size:12px}
+.master-info p+p{margin-top:8px}
+.master-info .keys{color:var(--dim);font-size:11px}
+.foot{display:flex;justify-content:space-between;gap:15px;flex-wrap:wrap;padding:22px 4px;color:var(--dim);font-size:11px;letter-spacing:.04em}
+.toast{position:fixed;left:50%;bottom:max(22px,env(safe-area-inset-bottom));transform:translate(-50%,20px);opacity:0;pointer-events:none;background:#e5f5ec;color:#10251e;padding:10px 16px;border-radius:12px;font-weight:700;box-shadow:0 10px 35px #0006;transition:opacity .2s,transform .2s;z-index:20;max-width:calc(100vw - 32px);text-align:center}
+.toast.show{opacity:1;transform:translate(-50%,0)}
+
+@media(max-width:900px){
+  .control-row{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .dual{grid-template-columns:1fr}
+  .master-panel{grid-template-columns:1fr}
+}
+@media(max-width:560px){
+  .shell{padding:13px;padding-left:max(13px,env(safe-area-inset-left));padding-right:max(13px,env(safe-area-inset-right))}
+  .topline{font-size:10px;letter-spacing:.1em}
+  .hero{padding:30px 4px 22px}
+  .hero .sig{letter-spacing:.12em;line-height:1.8}
+  .toolbar{align-items:stretch}
+  .button-group{width:100%}
+  .btn{flex:1 1 auto}
+  .btn.primary{flex-basis:100%}
+  .control-row{gap:8px}
+  .control{padding:11px}
+  .panel{padding:14px}
+  .step-grid{grid-template-columns:repeat(8,minmax(0,1fr));gap:6px}
+  .panel h2{font-size:17px}
+  .chip{font-size:9px}
+  .phase strong{font-size:19px}
+}
+@media(max-width:560px){
+  .sync-bar{gap:14px}
+  .sync-bar .switches{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:5px 12px}
+  .master-panel{padding:13px}
+  .visualizer{height:95px}
+}
+@media(prefers-reduced-motion:reduce){
+  html{scroll-behavior:auto}
+  *,*:before,*:after{transition:none!important}
+  .step.playing{transform:none}
+}
+</style>
+</head>
+<body>
+<noscript>ETERNIA · AURORA needs JavaScript and Web Audio to make sound.</noscript>
+<div class="shell">
+  <div class="topline"><span>✦ Generative ambient-rhythmic instrument</span><span class="status"><i class="dot" id="statusDot"></i><span id="statusText">Audio standing by</span></span></div>
+  <header class="hero">
+    <div class="eyebrow">Ambient depth · rhythmic pulse · experimental drift</div>
+    <h1>ETERNIA · AURORA</h1>
+    <p>Two evolving sound worlds with filter, delay, slow modulation, and generative mutation. Shape living patterns that breathe between stillness and motion.</p>
+    <div class="sig">STELLAR+ <span class="slash">/</span> FILTER + DELAY <span class="slash">/</span> EVOLVE<span id="sigRecord"> · RECORD</span></div>
+  </header>
+
+  <section class="toolbar" aria-label="Transport and session controls">
+    <div class="button-group">
+      <button type="button" class="btn primary" id="playBtn">▶ Play session</button>
+      <button type="button" class="btn" id="resetBtn" title="Stop and return to step 1 (R)">↺ Reset</button>
+      <button type="button" class="btn" id="randomBtn" title="Generate new patterns for both engines">✧ Generate</button>
+      <button type="button" class="btn" id="evolveBtn" title="Mutate both patterns (E)">⟳ Evolve</button>
+      <button type="button" class="btn ghost" id="tapBtn">⌁ Tap tempo</button>
+    </div>
+    <div class="button-group">
+      <button type="button" class="btn" id="saveBtn">Save preset</button>
+      <button type="button" class="btn" id="loadBtn">Load preset</button>
+      <button type="button" class="btn ghost" id="exportBtn">Export settings</button>
+      <button type="button" class="btn ghost" id="importBtn">Import settings</button>
+      <button type="button" class="btn ghost" id="recordBtn" aria-pressed="false">● Record WAV</button>
+      <input id="importFile" type="file" accept="application/json,.json" hidden>
+    </div>
+  </section>
+
+  <section class="toolbar" aria-label="Atmosphere starters" style="margin-top:14px">
+    <div><div class="mini-label">Start with a feeling</div><strong style="font-size:13px">Atmosphere presets</strong><div class="hint" style="color:var(--muted);font-size:11px">One touch to set the mood. Fine-tune anything afterward.</div></div>
+    <div class="button-group">
+      <button type="button" class="btn vibe" data-vibe="nebula">✦ Nebula</button>
+      <button type="button" class="btn vibe" data-vibe="deep">◉ Deep space</button>
+      <button type="button" class="btn vibe" data-vibe="aurora">✧ Aurora glass</button>
+      <button type="button" class="btn vibe" data-vibe="ritual">⌁ Slow ritual</button>
+    </div>
+  </section>
+
+  <section class="control-row" aria-label="Global sound controls">
+    <div class="control"><div class="control-head"><label for="tempo">Master tempo</label><span class="value" id="tempoVal">72 BPM</span></div><input id="tempo" type="range" min="40" max="140" value="72"><div class="mini-label">Quarter-note pulse</div></div>
+    <div class="control"><div class="control-head"><label for="swing">Swing</label><span class="value" id="swingVal">18%</span></div><input id="swing" type="range" min="0" max="48" value="18"><div class="mini-label">Offbeat displacement</div></div>
+    <div class="control"><div class="control-head"><label for="human">Human feel</label><span class="value" id="humanVal">6 ms</span></div><input id="human" type="range" min="0" max="22" value="6"><div class="mini-label">Subtle timing variation</div></div>
+    <div class="control"><div class="control-head"><label for="volume">Master level</label><span class="value" id="volumeVal">36%</span></div><input id="volume" type="range" min="0" max="100" value="36"><div class="mini-label">Output gain</div></div>
+    <div class="control"><div class="control-head"><label for="scale">Scale</label><span class="value small" id="scaleVal"></span></div><select id="scale"><option value="major">Luminous major</option><option value="minor">Nocturnal minor</option><option value="pentatonic">Open pentatonic</option><option value="dorian">Dorian drift</option><option value="phrygian">Phrygian shadow</option><option value="lydian">Lydian lift</option><option value="mixolydian">Mixolydian warmth</option></select><div class="mini-label">Notes in use</div></div>
+    <div class="control"><div class="control-head"><label for="root">Root note</label><span class="value small" id="rootVal"></span></div><select id="root"><option>C</option><option>C#</option><option>D</option><option>Eb</option><option>E</option><option>F</option><option>F#</option><option>G</option><option>Ab</option><option>A</option><option>Bb</option><option>B</option></select><div class="mini-label">Starwave · Aurora base pitch</div></div>
+    <div class="control"><div class="control-head"><label for="density">Note probability</label><span class="value" id="densityVal">78%</span></div><input id="density" type="range" min="15" max="100" value="78"><div class="mini-label">Chance each active step sounds</div></div>
+    <div class="control"><div class="control-head"><label for="space">Stereo width</label><span class="value" id="spaceVal">80%</span></div><input id="space" type="range" min="0" max="100" value="80"><div class="mini-label">Spatial separation</div></div>
+  </section>
+
+  <section class="control-row" aria-label="Filter and delay controls">
+    <div class="control"><div class="control-head"><label for="cutoff">Filter cutoff</label><span class="value" id="cutoffVal">1800 Hz</span></div><input id="cutoff" type="range" min="0" max="1000" value="596"><div class="mini-label">Shared low-pass</div></div>
+    <div class="control"><div class="control-head"><label for="resonance">Resonance</label><span class="value" id="resVal">4.2</span></div><input id="resonance" type="range" min="0.5" max="18" step="0.1" value="4.2"><div class="mini-label">Filter Q</div></div>
+    <div class="control"><div class="control-head"><label for="delayTime">Delay time</label><span class="value" id="delayTimeVal">1/2</span></div><input id="delayTime" type="range" min="1" max="10" value="8"><div class="mini-label">Synced to tempo</div></div>
+    <div class="control"><div class="control-head"><label for="delayFeedback">Delay feedback</label><span class="value" id="delayFbVal">32%</span></div><input id="delayFeedback" type="range" min="0" max="70" value="32"><div class="mini-label">Repeats</div></div>
+  </section>
+
+  <section class="toolbar sync-bar" aria-label="Synchronization and motion">
+    <div><div class="mini-label">Synchronization &amp; motion</div><strong>Shared clock + slow drift</strong><div class="hint" id="syncHint"></div></div>
+    <div class="switches">
+      <label class="switchline"><input type="checkbox" id="sync" checked> Link both engines</label>
+      <label class="switchline" title="Available when the engines are unlinked. Off lets Aurora drift against Starwave at ¾ speed."><input type="checkbox" id="follow" checked> Follow master tempo</label>
+      <label class="switchline"><input type="checkbox" id="ambient" checked> Ambient reverb</label>
+      <label class="switchline"><input type="checkbox" id="delayOn" checked> Delay</label>
+      <label class="switchline"><input type="checkbox" id="evolveAuto"> Auto-evolve</label>
+      <label class="switchline"><input type="checkbox" id="metronome"> Click track</label>
+    </div>
+  </section>
+
+  <section class="dual">
+    <article class="panel star" id="starPanel">
+      <div class="panel-head"><div><h2>✦ Starwave</h2><div class="desc">Macro engine · deep pulses, filter movement &amp; harmonic motion</div></div><span class="chip">LOW / COSMIC</span></div>
+      <div class="phase"><div class="small">Current movement · <span id="starCount">01 / 16</span></div><strong id="starPhase">Gathering light</strong><span id="starAction">A low tone opens the space.</span></div>
+      <div class="step-grid" id="starGrid" role="group" aria-label="Starwave 16-step pattern"></div>
+      <div class="pattern-tools"><button type="button" class="btn" data-pattern="star" data-action="random">Randomize</button><button type="button" class="btn" data-pattern="star" data-action="clear">Clear</button><button type="button" class="btn" data-pattern="star" data-action="euclid">Euclidean</button><button type="button" class="btn" data-pattern="star" data-action="rotate">Rotate</button><button type="button" class="btn" data-pattern="star" data-action="mutate">Mutate</button><button type="button" class="btn" data-pattern="star" data-action="mute" aria-pressed="false">Mute engine</button></div>
+      <div class="meter"><span id="starMeter"></span></div>
+      <div class="panel-foot"><span id="starMeta">16 steps · detuned sine/triangle + filter</span><span id="starState">READY</span></div>
+    </article>
+    <article class="panel aurora" id="auroraPanel">
+      <div class="panel-head"><div><h2>✧ Aurora</h2><div class="desc">Micro engine · delicate shimmer, delay trails &amp; melodic detail</div></div><span class="chip">HIGH / LUMINOUS</span></div>
+      <div class="phase"><div class="small">Current movement · <span id="auroraCount">01 / 16</span></div><strong id="auroraPhase">Quiet observation</strong><span id="auroraAction">A small glimmer finds its place.</span></div>
+      <div class="step-grid" id="auroraGrid" role="group" aria-label="Aurora 16-step pattern"></div>
+      <div class="pattern-tools"><button type="button" class="btn" data-pattern="aurora" data-action="random">Randomize</button><button type="button" class="btn" data-pattern="aurora" data-action="clear">Clear</button><button type="button" class="btn" data-pattern="aurora" data-action="euclid">Euclidean</button><button type="button" class="btn" data-pattern="aurora" data-action="rotate">Rotate</button><button type="button" class="btn" data-pattern="aurora" data-action="mutate">Mutate</button><button type="button" class="btn" data-pattern="aurora" data-action="mute" aria-pressed="false">Mute engine</button></div>
+      <div class="meter"><span id="auroraMeter"></span></div>
+      <div class="panel-foot"><span id="auroraMeta">16 steps · pure sine + delay</span><span id="auroraState">READY</span></div>
+    </article>
+  </section>
+
+  <section class="master-panel">
+    <div class="master-info">
+      <h3>Signal Observatory</h3>
+      <p id="scopeNote">Live waveform of the master output. Audio starts when you press Play. Settings stay in this browser. Record saves the session as a 16-bit stereo WAV.</p>
+      <p id="sessionInfo">Session 00:00 · Pattern: fixed</p>
+      <p class="keys">Space = play/pause · R = reset · E = evolve</p>
+    </div>
+    <canvas class="visualizer" id="scope" width="900" height="220" role="img" aria-label="Live audio waveform"></canvas>
+  </section>
+
+  <footer class="foot"><span>ETERNIA · AURORA / STELLAR+</span><span>Local-first · No network · No account</span><span>Make space for wonder.</span></footer>
+</div>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script>
+(() => {
+'use strict';
+
+/* ───────────── helpers ───────────── */
+const $ = id => document.getElementById(id);
+const clamp = (n, a, b) => Math.max(a, Math.min(b, n));
+const rnd = n => Math.floor(Math.random() * n);
+const num = (v, def, min, max) => { const n = Number(v); return Number.isFinite(n) ? clamp(n, min, max) : def; };
+const pad2 = n => String(n).padStart(2, '0');
+
+/* ───────────── constants ───────────── */
+const STEPS = 16;
+const ENGINES = ['star', 'aurora'];
+const NAMES = {star: 'Starwave', aurora: 'Aurora'};
+const LOOKAHEAD = 0.14;          // seconds scheduled ahead of the audio clock
+const TICK_MS = 25;              // scheduler wake-up interval
+const MAX_DELAY = 6;             // seconds, DelayNode capacity
+const MAX_REC_SECONDS = 600;     // recording safety cap (10 min)
+const PRESET_KEY = 'eterniaAuroraPresetV3';
+const PRESET_VERSION = 4;
+
+const NOTE_NAMES = ['C','C#','D','Eb','E','F','F#','G','Ab','A','Bb','B'];
+const rootMidi = {'C':48,'C#':49,'D':50,'Eb':51,'E':52,'F':53,'F#':54,'G':55,'Ab':56,'A':57,'Bb':58,'B':59};
+const scales = {
+  major: [0,2,4,5,7,9,11], minor: [0,2,3,5,7,8,10], pentatonic: [0,2,4,7,9],
+  dorian: [0,2,3,5,7,9,10], phrygian: [0,1,3,5,7,8,10], lydian: [0,2,4,6,7,9,11], mixolydian: [0,2,4,5,7,9,10]
+};
+// Delay divisions in ascending order: [label, length in quarter-note beats]
+const DELAY_DIVS = [['1/32',.125],['1/16',.25],['3/32',.375],['1/8',.5],['3/16',.75],['1/4',1],['3/8',1.5],['1/2',2],['3/4',3],['1',4]];
+// Older presets (v3) used a different, non-monotonic list; kept only to migrate them.
+const LEGACY_DELAY_BEATS = [.125,.25,.5,1,.75,2,1.5,2.5,3,4,5,6,8,10,12,16];
+
+const names = {
+  star: ['Gathering light','Aligning the horizon','Opening the gates','Radiant return'],
+  aurora: ['Quiet observation','A grateful whisper','Insight in motion','Light shared outward']
+};
+const actions = {
+  star: ['A low tone opens the space.','The pulse brightens and expands.','The pattern turns toward possibility.','The constellation settles into glow.'],
+  aurora: ['A small glimmer finds its place.','A delicate note answers the pulse.','A new detail comes into focus.','The shimmer travels outward.']
+};
+
+// Filter cutoff slider is logarithmic (200 Hz – 8 kHz) so sweeps feel even.
+const CUT_MIN = 200, CUT_MAX = 8000;
+const cutToPos = hz => Math.round(Math.log(clamp(hz, CUT_MIN, CUT_MAX) / CUT_MIN) / Math.log(CUT_MAX / CUT_MIN) * 1000);
+const posToCut = p => Math.round(CUT_MIN * Math.pow(CUT_MAX / CUT_MIN, p / 1000) / 10) * 10;
+
+/* ───────────── state ───────────── */
+const state = {
+  playing: false, bpm: 72, swing: 18, human: 6, volume: 0.36, density: 78, width: 0.80,
+  scale: 'major', root: 'C', sync: true, follow: true, reverb: true, delayOn: true, click: false, evolveAuto: false,
+  cutoff: 1800, resonance: 4.2, delayDiv: 8, delayFb: 0.32,
+  clock: {star: {step: 0, next: 0}, aurora: {step: 0, next: 0}},
+  muted: {star: false, aurora: false}, taps: [], accum: 0, playSince: 0,
+  patterns:   {star: [1,0,0,1,0,0,1,0,1,0,0,1,0,1,0,0], aurora: [1,0,1,0,0,1,0,1,0,0,1,0,1,0,0,1]},
+  offsets:    {star: [0,0,2,0,4,0,2,0,0,4,2,0,5,4,2,0], aurora: [12,0,7,0,4,0,9,0,7,0,2,0,5,0,4,0]},
+  velocities: {star: Array(STEPS).fill(0.75), aurora: Array(STEPS).fill(0.65)}
+};
+
+/* ───────────── audio graph ───────────── */
+let ctx = null, bus = null, filter = null, dry = null, wet = null, convolver = null;
+let delaySend = null, delay = null, fbFilter = null, delayGain = null, delayReturn = null;
+let master = null, limiter = null, analyser = null;
+
+function initAudio() {
+  if (ctx) { if (ctx.state !== 'running') ctx.resume().catch(() => {}); return true; }
+  const AC = window.AudioContext || window.webkitAudioContext;
+  if (!AC) { toast('This browser does not support Web Audio'); return false; }
+  try { if (navigator.audioSession) navigator.audioSession.type = 'playback'; } catch (e) { /* optional API */ }
+  try { ctx = new AC({latencyHint: 'playback'}); } catch (e) { ctx = new AC(); }
+
+  bus = ctx.createGain();
+  filter = ctx.createBiquadFilter(); filter.type = 'lowpass'; filter.frequency.value = state.cutoff; filter.Q.value = state.resonance;
+  dry = ctx.createGain(); wet = ctx.createGain();
+  convolver = ctx.createConvolver(); convolver.buffer = makeImpulse(ctx, 2.8, 2.0);
+
+  delaySend = ctx.createGain(); delaySend.gain.value = state.delayOn ? 1 : 0;
+  delay = ctx.createDelay(MAX_DELAY); delay.delayTime.value = delaySeconds();
+  fbFilter = ctx.createBiquadFilter(); fbFilter.type = 'lowpass'; fbFilter.frequency.value = 4200; fbFilter.Q.value = 0.5;
+  delayGain = ctx.createGain(); delayGain.gain.value = state.delayOn ? state.delayFb : 0;
+  delayReturn = ctx.createGain(); delayReturn.gain.value = 0.85;
+
+  master = ctx.createGain(); master.gain.value = state.volume;
+  limiter = ctx.createDynamicsCompressor();
+  limiter.threshold.value = -8; limiter.knee.value = 10; limiter.ratio.value = 12; limiter.attack.value = 0.003; limiter.release.value = 0.2;
+  analyser = ctx.createAnalyser(); analyser.fftSize = 2048;
+
+  bus.connect(filter);
+  filter.connect(dry); dry.connect(master);
+  filter.connect(convolver); convolver.connect(wet); wet.connect(master);
+  filter.connect(delaySend); delaySend.connect(delay);
+  delay.connect(delayReturn); delayReturn.connect(master);
+  delay.connect(fbFilter); fbFilter.connect(delayGain); delayGain.connect(delay);   // darkening feedback loop
+  master.connect(limiter); limiter.connect(analyser); analyser.connect(ctx.destination);
+
+  ctx.onstatechange = () => {
+    if (!state.playing) return;
+    if (ctx.state === 'running') setStatus('Sound in motion', 'live');
+    else setStatus('Audio interrupted · press play', 'alert');
+  };
+  updateAudioSettings(true);
+  return true;
+}
+
+function makeImpulse(c, duration, decay) {
+  const len = Math.floor(c.sampleRate * duration), b = c.createBuffer(2, len, c.sampleRate);
+  for (let ch = 0; ch < 2; ch++) {
+    const d = b.getChannelData(ch);
+    for (let i = 0; i < len; i++) d[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / len, decay);
+  }
+  return b;
+}
+
+function delaySeconds() {
+  const beats = (DELAY_DIVS[state.delayDiv - 1] || DELAY_DIVS[7])[1];
+  return clamp(60 / state.bpm * beats, 0.02, MAX_DELAY - 0.05);
+}
+
+function updateAudioSettings(immediate) {
+  if (!ctx) return;
+  const t = ctx.currentTime, set = (param, v, tc) => immediate ? (param.value = v) : param.setTargetAtTime(v, t, tc);
+  set(master.gain, state.volume, 0.03);
+  set(dry.gain, state.reverb ? 0.72 : 1, 0.05);
+  set(wet.gain, state.reverb ? 0.28 : 0, 0.05);
+  set(filter.frequency, state.cutoff, 0.08);
+  set(filter.Q, state.resonance, 0.05);
+  set(delay.delayTime, delaySeconds(), 0.08);
+  set(delaySend.gain, state.delayOn ? 1 : 0, 0.03);
+  set(delayGain.gain, state.delayOn ? state.delayFb : 0, 0.04);
+}
+
+/* ───────────── voices ───────────── */
+// `degree` is a scale degree; degrees beyond the scale length climb into higher octaves.
+function frequency(degree, octave) {
+  const sc = scales[state.scale] || scales.major, n = sc.length;
+  const oct = Math.floor(degree / n), idx = ((degree % n) + n) % n;
+  const midi = rootMidi[state.root] + sc[idx] + (octave + oct) * 12;
+  return 440 * Math.pow(2, (midi - 69) / 12);
+}
+
+function playTone(engine, index, time) {
+  if (!ctx || state.muted[engine]) return;
+  if (!state.patterns[engine][index] || Math.random() * 100 > state.density) return;
+  const isStar = engine === 'star';
+  const degree = state.offsets[engine][index] || 0;
+  const vel = state.velocities[engine][index] || 0.7;
+  const freq = frequency(degree, isStar ? -1 : 1);
+  const osc = ctx.createOscillator(), osc2 = ctx.createOscillator(), gain = ctx.createGain();
+  osc.type = isStar ? (index % 8 === 4 ? 'triangle' : 'sine') : 'sine';
+  osc2.type = 'sine';
+  osc.frequency.setValueAtTime(freq, time);
+  osc2.frequency.setValueAtTime(freq * (isStar ? 1.007 : 1.003), time);
+  const peak = (isStar ? 0.14 : 0.085) * vel;
+  const dur = isStar ? 0.42 : 0.28;
+  gain.gain.setValueAtTime(0.0001, time);
+  gain.gain.exponentialRampToValueAtTime(peak, time + 0.018);
+  gain.gain.exponentialRampToValueAtTime(0.0001, time + dur);
+  osc.connect(gain); osc2.connect(gain);
+  let out = gain;
+  if (ctx.createStereoPanner) {
+    const pan = ctx.createStereoPanner();
+    pan.pan.value = clamp(((index / (STEPS - 1)) * 2 - 1) * state.width * (isStar ? 0.65 : 1), -1, 1);
+    gain.connect(pan); out = pan;
+  }
+  out.connect(bus);
+  osc.start(time); osc2.start(time);
+  osc.stop(time + dur + 0.04); osc2.stop(time + dur + 0.04);
+}
+
+function clickTone(time, accent) {
+  if (!ctx || !state.click) return;
+  const o = ctx.createOscillator(), g = ctx.createGain();
+  o.type = 'sine'; o.frequency.value = accent ? 1400 : 900;
+  g.gain.setValueAtTime(0.0001, time);
+  g.gain.exponentialRampToValueAtTime(0.04, time + 0.002);
+  g.gain.exponentialRampToValueAtTime(0.0001, time + 0.03);
+  o.connect(g); g.connect(bus);
+  o.start(time); o.stop(time + 0.04);
+}
+
+/* ───────────── scheduler ───────────── */
+const stepSeconds = () => 60 / state.bpm / 4;   // sixteenth note
+
+function jitter(base, i, stepLen) {
+  return base + ((i % 2 === 1) ? stepLen * state.swing / 100 : 0) + (Math.random() * 2 - 1) * state.human / 1000;
+}
+
+function evolveTick() {
+  if (!state.evolveAuto) return;
+  if (Math.random() < 0.6) mutate('star', {silent: true, amount: 1});
+  if (Math.random() < 0.7) mutate('aurora', {silent: true, amount: 2});
+}
+
+function schedule() {
+  if (!state.playing || !ctx || ctx.state !== 'running') return;
+  const now = ctx.currentTime, horizon = now + LOOKAHEAD, clk = state.clock, iv = stepSeconds();
+  // Recover cleanly after a stall instead of firing a burst of late notes.
+  if (clk.star.next < now - 0.25) { clk.star.next = now + 0.05; if (state.sync) clk.aurora.next = clk.star.next; }
+  if (clk.aurora.next < now - 0.25) clk.aurora.next = now + 0.05;
+
+  while (clk.star.next < horizon) {
+    const i = clk.star.step, t = Math.max(now + 0.003, jitter(clk.star.next, i, iv));
+    if (i === 0) evolveTick();
+    playTone('star', i, t); clickTone(t, i % 4 === 0); pushUI('star', i, t);
+    if (state.sync) { playTone('aurora', i, t); pushUI('aurora', i, t); clk.aurora.step = (i + 1) % STEPS; }
+    clk.star.step = (i + 1) % STEPS; clk.star.next += iv;
+    if (state.sync) clk.aurora.next = clk.star.next;
+  }
+  if (!state.sync) {
+    const av = iv * (state.follow ? 1 : 4 / 3);   // unfollowed Aurora runs at ¾ speed
+    while (clk.aurora.next < horizon) {
+      const i = clk.aurora.step, t = Math.max(now + 0.003, jitter(clk.aurora.next, i, av));
+      playTone('aurora', i, t); pushUI('aurora', i, t);
+      clk.aurora.step = (i + 1) % STEPS; clk.aurora.next += av;
+    }
+  }
+}
+
+// A Worker keeps the clock steady when the tab is in the background; falls back to a plain timer.
+let tickWorker = null, tickWorkerUrl = null, tickFallback = null;
+function startTicker() {
+  stopTicker();
+  const useFallback = () => { if (!tickFallback) tickFallback = setInterval(schedule, TICK_MS); };
+  try {
+    const src = 'let id=null;onmessage=e=>{clearInterval(id);id=null;if(e.data==="start")id=setInterval(()=>postMessage(0),' + TICK_MS + ')}';
+    tickWorkerUrl = URL.createObjectURL(new Blob([src], {type: 'text/javascript'}));
+    tickWorker = new Worker(tickWorkerUrl);
+    tickWorker.onmessage = schedule;
+    tickWorker.onerror = () => { if (tickWorker) { tickWorker.terminate(); tickWorker = null; } if (state.playing) useFallback(); };
+    tickWorker.postMessage('start');
+  } catch (e) { tickWorker = null; useFallback(); }
+}
+function stopTicker() {
+  if (tickWorker) { try { tickWorker.postMessage('stop'); tickWorker.terminate(); } catch (e) { /* ignore */ } tickWorker = null; }
+  if (tickWorkerUrl) { URL.revokeObjectURL(tickWorkerUrl); tickWorkerUrl = null; }
+  if (tickFallback) { clearInterval(tickFallback); tickFallback = null; }
+}
+
+/* ───────────── UI: grids ───────────── */
+const cells = {star: [], aurora: []};
+const playingCell = {star: -1, aurora: -1};
+
+function buildGrid(engine) {
+  const grid = $(engine + 'Grid'); grid.textContent = ''; cells[engine] = [];
+  for (let i = 0; i < STEPS; i++) {
+    const wrap = document.createElement('div'); wrap.className = 'cell' + (i % 4 === 0 ? ' beat' : '');
+    const b = document.createElement('button'); b.type = 'button'; b.className = 'step';
+    b.setAttribute('aria-label', `${NAMES[engine]} step ${i + 1}`);
+    b.addEventListener('click', () => { state.patterns[engine][i] = state.patterns[engine][i] ? 0 : 1; paintCell(engine, i); });
+    const n = document.createElement('span'); n.className = 'step-num'; n.textContent = i + 1;
+    wrap.append(b, n); grid.appendChild(wrap); cells[engine].push(b);
+  }
+  paintAll(engine);
+}
+function paintCell(engine, i) {
+  const on = !!state.patterns[engine][i], b = cells[engine][i];
+  b.classList.toggle('on', on); b.setAttribute('aria-pressed', String(on));
+  b.title = `Step ${i + 1}: ${on ? 'on' : 'off'} — click to toggle`;
+}
+function paintAll(engine) { for (let i = 0; i < STEPS; i++) paintCell(engine, i); }
+function setPlayingCell(engine, i) {
+  const prev = playingCell[engine];
+  if (prev === i) return;
+  if (prev >= 0) cells[engine][prev].classList.remove('playing');
+  if (i >= 0) cells[engine][i].classList.add('playing');
+  playingCell[engine] = i;
+}
+
+/* ───────────── UI: playhead queue (synced to the audio clock) ───────────── */
+let uiQueue = [];
+function pushUI(engine, i, t) { uiQueue.push({engine, i, t}); if (uiQueue.length > 256) uiQueue.splice(0, uiQueue.length - 256); }
+
+const textCache = {};
+function setText(id, txt) { if (textCache[id] !== txt) { textCache[id] = txt; $(id).textContent = txt; } }
+
+function showStep(engine, i) {
+  setPlayingCell(engine, i);
+  const q = Math.floor(i / 4);
+  setText(engine + 'Count', pad2(i + 1) + ' / 16');
+  setText(engine + 'Phase', names[engine][q]);
+  setText(engine + 'Action', actions[engine][q]);
+  $(engine + 'Meter').style.width = ((i + 1) / STEPS * 100) + '%';
+  setText(engine + 'State', 'PLAYING');
+}
+
+function flushUI() {
+  if (!ctx || !uiQueue.length) return;
+  const cur = ctx.currentTime - (ctx.outputLatency || 0), rest = [];
+  for (const e of uiQueue) { if (e.t <= cur) showStep(e.engine, e.i); else rest.push(e); }
+  uiQueue = rest;
+}
+
+/* ───────────── pattern tools ───────────── */
+const offsetRange = engine => (scales[state.scale] || scales.major).length * (engine === 'star' ? 1 : 2);
+
+function randomize(engine, silent) {
+  state.patterns[engine] = state.patterns[engine].map(() => Math.random() < (engine === 'star' ? 0.52 : 0.38) ? 1 : 0);
+  if (!state.patterns[engine].some(Boolean)) state.patterns[engine][0] = 1;
+  const range = offsetRange(engine);
+  state.offsets[engine] = state.offsets[engine].map(() => rnd(range));
+  state.velocities[engine] = state.velocities[engine].map(() => 0.45 + Math.random() * 0.5);
+  paintAll(engine);
+  if (!silent) toast(NAMES[engine] + ' pattern generated');
+}
+
+function euclidean(engine) {
+  const pulses = engine === 'star' ? 5 : 7, n = STEPS;
+  state.patterns[engine] = Array.from({length: n}, (_, i) => Math.floor((i + 1) * pulses / n) !== Math.floor(i * pulses / n) ? 1 : 0);
+  paintAll(engine);
+  toast(NAMES[engine] + ': Euclidean rhythm applied');
+}
+
+function rotate(engine) {
+  for (const arr of [state.patterns[engine], state.offsets[engine], state.velocities[engine]]) arr.unshift(arr.pop());
+  paintAll(engine);
+}
+
+function clearPattern(engine) {
+  state.patterns[engine] = Array(STEPS).fill(0);
+  paintAll(engine);
+  toast(NAMES[engine] + ' cleared');
+}
+
+function mutate(engine, opts) {
+  const o = opts || {}, silent = !!o.silent, amount = o.amount || 3;
+  const p = state.patterns[engine], off = state.offsets[engine], range = offsetRange(engine);
+  for (let k = 0; k < amount; k++) {
+    const idx = rnd(STEPS);
+    if (Math.random() < 0.6) p[idx] = p[idx] ? 0 : 1; else off[idx] = rnd(range);
+  }
+  if (!p.some(Boolean)) p[rnd(STEPS)] = 1;
+  paintAll(engine);
+  if (!silent) toast(NAMES[engine] + ' mutated');
+}
+
+function evolveBoth() { mutate('star', {silent: true}); mutate('aurora', {silent: true}); toast('Both engines evolved'); }
+
+function refreshMuteButtons() {
+  document.querySelectorAll('[data-action="mute"]').forEach(b => {
+    const m = !!state.muted[b.dataset.pattern];
+    b.textContent = m ? 'Unmute engine' : 'Mute engine';
+    b.classList.toggle('warn', m); b.setAttribute('aria-pressed', String(m));
+  });
+}
+
+/* ───────────── toast / status ───────────── */
+let toastTimer = null;
+function toast(msg) {
+  const el = $('toast'); el.textContent = msg; el.classList.add('show');
+  clearTimeout(toastTimer); toastTimer = setTimeout(() => el.classList.remove('show'), 2200);
+}
+function setStatus(text, kind) {
+  $('statusText').textContent = text;
+  $('statusDot').className = 'dot' + (kind ? ' ' + kind : '');
+}
+
+/* ───────────── controls ───────────── */
+const midiName = m => NOTE_NAMES[m % 12] + (Math.floor(m / 12) - 1);
+
+function updateLabels() {
+  const fmt = {
+    tempo: v => v + ' BPM', swing: v => v + '%', human: v => v + ' ms', volume: v => v + '%', density: v => v + '%', space: v => v + '%',
+    cutoff: () => state.cutoff + ' Hz', resonance: v => Number(v).toFixed(1),
+    delayTime: v => (DELAY_DIVS[v - 1] || DELAY_DIVS[7])[0], delayFeedback: v => v + '%'
+  };
+  const out = {tempo: 'tempoVal', swing: 'swingVal', human: 'humanVal', volume: 'volumeVal', density: 'densityVal', space: 'spaceVal',
+    cutoff: 'cutoffVal', resonance: 'resVal', delayTime: 'delayTimeVal', delayFeedback: 'delayFbVal'};
+  for (const id in out) { const text = fmt[id]($(id).value); $(out[id]).textContent = text; $(id).setAttribute('aria-valuetext', text); }
+  const base = rootMidi[state.root], sc = scales[state.scale] || scales.major;
+  $('scaleVal').textContent = sc.map(s => NOTE_NAMES[(base + s) % 12]).join(' ');
+  $('rootVal').textContent = midiName(base - 12) + ' · ' + midiName(base + 12);
+  $('syncHint').textContent = state.sync ? 'Aurora mirrors Starwave step for step.'
+    : state.follow ? 'Aurora follows the master tempo, three steps behind Starwave.'
+    : 'Aurora runs at ¾ speed and drifts in and out of phase with Starwave.';
+}
+
+function syncInputs() {
+  const wasSync = state.sync;
+  state.bpm = +$('tempo').value; state.swing = +$('swing').value; state.human = +$('human').value;
+  state.volume = +$('volume').value / 100; state.density = +$('density').value; state.width = +$('space').value / 100;
+  state.scale = $('scale').value; state.root = $('root').value;
+  state.sync = $('sync').checked; state.follow = $('follow').checked; state.reverb = $('ambient').checked;
+  state.delayOn = $('delayOn').checked; state.click = $('metronome').checked; state.evolveAuto = $('evolveAuto').checked;
+  state.cutoff = posToCut(+$('cutoff').value); state.resonance = +$('resonance').value;
+  state.delayDiv = +$('delayTime').value; state.delayFb = +$('delayFeedback').value / 100;
+  if (wasSync && !state.sync) state.clock.aurora.step = (state.clock.star.step + 3) % STEPS;   // answer, don't shadow
+  $('follow').disabled = state.sync;
+  updateLabels(); updateAudioSettings();
+}
+
+/* ───────────── transport ───────────── */
+function play() {
+  if (!initAudio()) return;
+  if (ctx.state !== 'running') ctx.resume().catch(() => {});
+  const t0 = ctx.currentTime + 0.06;
+  state.clock.star.next = t0; state.clock.aurora.next = t0;
+  state.playing = true; state.playSince = Date.now();
+  $('playBtn').textContent = 'Ⅱ Pause session';
+  setStatus('Sound in motion', 'live');
+  setText('starState', 'PLAYING'); setText('auroraState', 'PLAYING');
+  startTicker(); schedule(); toast('Session started');
+}
+
+function pause() {
+  if (state.playing) state.accum += Date.now() - state.playSince;
+  state.playing = false; stopTicker(); uiQueue = [];
+  $('playBtn').textContent = '▶ Play session';
+  setStatus('Audio paused', '');
+  setText('starState', 'PAUSED'); setText('auroraState', 'PAUSED');
+}
+
+function togglePlay() { state.playing ? pause() : play(); }
+
+function reset() {
+  pause();
+  state.clock.star.step = 0; state.clock.aurora.step = state.sync ? 0 : 3;
+  state.accum = 0;
+  ENGINES.forEach(e => {
+    setPlayingCell(e, -1);
+    setText(e + 'Count', '01 / 16'); $(e + 'Meter').style.width = '0%'; setText(e + 'State', 'READY');
+    setText(e + 'Phase', names[e][0]); setText(e + 'Action', actions[e][0]);
+  });
+  setStatus('Audio standing by', '');
+  toast('Transport reset');
+}
+
+function tapTempo() {
+  const now = performance.now();
+  state.taps = state.taps.filter(t => now - t < 2500).slice(-7); state.taps.push(now);
+  if (state.taps.length < 2) { toast('Tap again in time'); return; }
+  const diffs = state.taps.slice(1).map((t, i) => t - state.taps[i]);
+  const avg = diffs.reduce((a, b) => a + b, 0) / diffs.length;
+  $('tempo').value = clamp(Math.round(60000 / avg), 40, 140); syncInputs();
+  toast('Tempo set to ' + $('tempo').value + ' BPM');
+}
+
+/* ───────────── presets ───────────── */
+function preset() {
+  return {
+    version: PRESET_VERSION, bpm: state.bpm, swing: state.swing, human: state.human, volume: state.volume,
+    density: state.density, width: state.width, scale: state.scale, root: state.root,
+    sync: state.sync, follow: state.follow, reverb: state.reverb, delayOn: state.delayOn, click: state.click, evolveAuto: state.evolveAuto,
+    cutoff: state.cutoff, resonance: state.resonance, delayDiv: state.delayDiv, delayFb: state.delayFb,
+    patterns: state.patterns, offsets: state.offsets, velocities: state.velocities, muted: state.muted
+  };
+}
+
+function cleanSteps(arr, current, map) {
+  return Array.from({length: STEPS}, (_, i) => (Array.isArray(arr) && arr[i] !== undefined) ? map(arr[i], current[i]) : current[i]);
+}
+
+function applyPreset(p) {
+  if (!p || typeof p !== 'object' || !p.patterns || !Array.isArray(p.patterns.star) || !Array.isArray(p.patterns.aurora)) throw new Error('Invalid preset');
+  let delayDiv = num(p.delayDiv, state.delayDiv, 1, 16);
+  if ((p.version || 3) < 4 && p.delayDiv !== undefined) {
+    const beats = LEGACY_DELAY_BEATS[Math.round(delayDiv) - 1] || 2;
+    delayDiv = DELAY_DIVS.reduce((best, d, i) => Math.abs(d[1] - beats) < Math.abs(DELAY_DIVS[best][1] - beats) ? i : best, 0) + 1;
+  }
+  $('tempo').value = Math.round(num(p.bpm, 72, 40, 140));
+  $('swing').value = Math.round(num(p.swing, 0, 0, 48));
+  $('human').value = Math.round(num(p.human, 0, 0, 22));
+  $('volume').value = Math.round(num(p.volume, 0.36, 0, 1) * 100);
+  $('density').value = Math.round(num(p.density, 78, 15, 100));
+  $('space').value = Math.round(num(p.width, 0.8, 0, 1) * 100);
+  $('scale').value = scales[p.scale] ? p.scale : 'major';
+  $('root').value = rootMidi[p.root] !== undefined ? p.root : 'C';
+  $('sync').checked = p.sync !== false; $('follow').checked = p.follow !== false;
+  $('ambient').checked = p.reverb !== false; $('delayOn').checked = p.delayOn !== false;
+  $('metronome').checked = !!p.click; $('evolveAuto').checked = !!p.evolveAuto;
+  $('cutoff').value = cutToPos(num(p.cutoff, 1800, CUT_MIN, CUT_MAX));
+  $('resonance').value = num(p.resonance, 4.2, 0.5, 18);
+  $('delayTime').value = Math.round(clamp(delayDiv, 1, DELAY_DIVS.length));
+  $('delayFeedback').value = Math.round(num(p.delayFb, 0.32, 0, 0.7) * 100);
+  ENGINES.forEach(e => {
+    state.patterns[e] = cleanSteps(p.patterns[e], state.patterns[e], v => v ? 1 : 0);
+    if (!state.patterns[e].some(Boolean)) state.patterns[e][0] = 1;
+    state.offsets[e] = cleanSteps(p.offsets && p.offsets[e], state.offsets[e], (v, d) => Math.round(num(v, d, -14, 28)));
+    state.velocities[e] = cleanSteps(p.velocities && p.velocities[e], state.velocities[e], (v, d) => num(v, d, 0.05, 1));
+  });
+  state.muted = {star: !!(p.muted && p.muted.star), aurora: !!(p.muted && p.muted.aurora)};
+  syncInputs(); ENGINES.forEach(paintAll); refreshMuteButtons();
+}
+
+let publishedHost = false, downloadsCap = null;
+
+function download(blob, name) {
+  if (downloadsCap) {
+    return downloadsCap.save({filename: name, data: blob}).then(() => true, err => {
+      const code = err && err.code;
+      toast(code === 'declined' ? 'Save cancelled' : code === 'rejected_extension' ? 'This file type cannot be saved from here' : 'Saving files is not available in this view');
+      return false;
+    });
+  }
+  if (publishedHost) { toast('Saving files is not available in this view'); return Promise.resolve(false); }
+  const url = URL.createObjectURL(blob), a = document.createElement('a');
+  a.href = url; a.download = name; a.rel = 'noopener'; a.style.display = 'none';
+  document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(() => URL.revokeObjectURL(url), 5000);
+  return Promise.resolve(true);
+}
+
+function exportSettings() {
+  download(new Blob([JSON.stringify(preset(), null, 2)], {type: 'application/json'}), 'eternia-aurora-stellar-plus.json')
+    .then(ok => { if (ok) toast('Preset exported'); });
+}
+
+/* ───────────── recording (true 16-bit stereo WAV) ───────────── */
+let rec = null;
+const toPcm = x => { const s = x > 1 ? 1 : x < -1 ? -1 : x; return s < 0 ? s * 0x8000 : s * 0x7fff; };
+
+function encodeWav(chunks, frames, rate) {
+  const dataLen = frames * 4, head = new ArrayBuffer(44), v = new DataView(head);
+  const str = (o, s) => { for (let i = 0; i < s.length; i++) v.setUint8(o + i, s.charCodeAt(i)); };
+  str(0, 'RIFF'); v.setUint32(4, 36 + dataLen, true); str(8, 'WAVE'); str(12, 'fmt ');
+  v.setUint32(16, 16, true); v.setUint16(20, 1, true); v.setUint16(22, 2, true);
+  v.setUint32(24, rate, true); v.setUint32(28, rate * 4, true); v.setUint16(32, 4, true); v.setUint16(34, 16, true);
+  str(36, 'data'); v.setUint32(40, dataLen, true);
+  return new Blob([head, ...chunks], {type: 'audio/wav'});
+}
+
+function startRecording() {
+  if (!ctx || !limiter) { toast('Press play first, then record'); return; }
+  if (!ctx.createScriptProcessor) { toast('Recording is not supported in this browser'); return; }
+  const proc = ctx.createScriptProcessor(4096, 2, 2), sink = ctx.createGain();
+  sink.gain.value = 0;
+  const r = {proc, sink, chunks: [], frames: 0};
+  proc.onaudioprocess = ev => {
+    if (rec !== r) return;
+    const inb = ev.inputBuffer, L = inb.getChannelData(0), R = inb.numberOfChannels > 1 ? inb.getChannelData(1) : L;
+    const out = new Int16Array(L.length * 2);
+    for (let i = 0; i < L.length; i++) { out[2 * i] = toPcm(L[i]); out[2 * i + 1] = toPcm(R[i]); }
+    r.chunks.push(out); r.frames += L.length;
+    if (r.frames >= ctx.sampleRate * MAX_REC_SECONDS) setTimeout(() => { if (rec === r) { stopRecording(); toast('Recording stopped at the 10-minute limit'); } }, 0);
+  };
+  limiter.connect(proc); proc.connect(sink); sink.connect(ctx.destination);
+  rec = r;
+  $('recordBtn').classList.add('warn'); $('recordBtn').setAttribute('aria-pressed', 'true');
+  toast('Recording…');
+}
+
+function stopRecording() {
+  if (!rec) return;
+  const r = rec; rec = null;
+  r.proc.onaudioprocess = null;
+  try { limiter.disconnect(r.proc); } catch (e) { /* already disconnected */ }
+  try { r.proc.disconnect(); r.sink.disconnect(); } catch (e) { /* already disconnected */ }
+  $('recordBtn').textContent = '● Record WAV'; $('recordBtn').classList.remove('warn'); $('recordBtn').setAttribute('aria-pressed', 'false');
+  if (!r.frames) { toast('Nothing was recorded'); return; }
+  const d = new Date(), stamp = `${d.getFullYear()}${pad2(d.getMonth() + 1)}${pad2(d.getDate())}-${pad2(d.getHours())}${pad2(d.getMinutes())}${pad2(d.getSeconds())}`;
+  download(encodeWav(r.chunks, r.frames, ctx.sampleRate), `eternia-aurora-${stamp}.wav`)
+    .then(ok => { if (ok) toast('Recording saved as WAV'); });
+}
+
+const toggleRecord = () => rec ? stopRecording() : startRecording();
+
+/* ───────────── scope + frame loop ───────────── */
+const scope = $('scope'), sg = scope.getContext('2d');
+let scopeBuf = null, scopeScale = 1, scopeGain = 1;
+
+function fitScope() {
+  const r = scope.getBoundingClientRect();
+  if (!r.width || !r.height) return false;
+  const d = Math.min(window.devicePixelRatio || 1, 2), w = Math.round(r.width * d), h = Math.round(r.height * d);
+  if (scope.width !== w || scope.height !== h) { scope.width = w; scope.height = h; }
+  scopeScale = d; return true;
+}
+
+function drawScope() {
+  if (!fitScope()) return;
+  const w = scope.width, h = scope.height, s = scopeScale;
+  sg.clearRect(0, 0, w, h);
+  sg.lineWidth = 1; sg.strokeStyle = '#1c2948'; sg.beginPath();
+  for (let x = 0; x < w; x += 45 * s) { sg.moveTo(Math.round(x) + .5, 0); sg.lineTo(Math.round(x) + .5, h); }
+  for (let y = 0; y < h; y += 30 * s) { sg.moveTo(0, Math.round(y) + .5); sg.lineTo(w, Math.round(y) + .5); }
+  sg.stroke();
+  sg.strokeStyle = '#2a3a63'; sg.beginPath(); sg.moveTo(0, h / 2); sg.lineTo(w, h / 2); sg.stroke();
+
+  let n = 1024, start = 0, peak = 0;
+  if (analyser) {
+    if (!scopeBuf) scopeBuf = new Uint8Array(analyser.fftSize);
+    analyser.getByteTimeDomainData(scopeBuf);
+    n = scopeBuf.length / 2;
+    for (let i = 1; i < n; i++) { if (scopeBuf[i - 1] < 128 && scopeBuf[i] >= 128) { start = i; break; } }   // steady trigger
+    for (let i = 0; i < n; i++) peak = Math.max(peak, Math.abs(scopeBuf[start + i] - 128) / 128);
+  }
+  const target = clamp(0.7 / Math.max(peak, 0.02), 1, 8);
+  scopeGain += (target - scopeGain) * 0.1;                                                              // gentle auto-gain
+  const live = state.playing && analyser;
+  sg.beginPath();
+  for (let k = 0; k < n; k++) {
+    const v = analyser ? (scopeBuf[start + k] - 128) / 128 : 0;
+    const x = k / (n - 1) * w, y = clamp(h / 2 - v * scopeGain * h / 2, 2, h - 2);
+    k === 0 ? sg.moveTo(x, y) : sg.lineTo(x, y);
+  }
+  sg.strokeStyle = live ? '#a6f4d6' : '#7182ad'; sg.lineWidth = 2 * s;
+  sg.shadowBlur = live ? 12 * s : 0; sg.shadowColor = '#9df4d2'; sg.stroke(); sg.shadowBlur = 0;
+}
+
+const mmss = ms => { const s = Math.floor(ms / 1000); return pad2(Math.floor(s / 60)) + ':' + pad2(s % 60); };
+
+function frame() {
+  requestAnimationFrame(frame);
+  if (document.hidden) return;
+  flushUI();
+  const elapsed = state.accum + (state.playing ? Date.now() - state.playSince : 0);
+  setText('sessionInfo', `Session ${mmss(elapsed)} · Pattern: ${state.evolveAuto ? 'evolving' : 'fixed'}`);
+  if (rec && ctx) { const t = 'Stop · ' + mmss(rec.frames / ctx.sampleRate * 1000); if ($('recordBtn').textContent !== '■ ' + t) $('recordBtn').textContent = '■ ' + t; }
+  drawScope();
+}
+
+/* ───────────── events ───────────── */
+$('playBtn').addEventListener('click', togglePlay);
+$('resetBtn').addEventListener('click', reset);
+$('randomBtn').addEventListener('click', () => { randomize('star', true); randomize('aurora', true); toast('New patterns generated'); });
+$('evolveBtn').addEventListener('click', evolveBoth);
+$('tapBtn').addEventListener('click', tapTempo);
+
+const atmospheres = {
+  nebula: {bpm:72, swing:18, human:6, volume:32, density:76, space:88, scale:'lydian', root:'C', cutoff:2350, resonance:3.2, delayTime:8, delayFeedback:34, ambient:true, delayOn:true},
+  deep:   {bpm:56, swing:8, human:3, volume:34, density:54, space:72, scale:'minor', root:'D', cutoff:720, resonance:2.1, delayTime:6, delayFeedback:27, ambient:true, delayOn:true},
+  aurora: {bpm:84, swing:22, human:8, volume:30, density:86, space:100, scale:'pentatonic', root:'F', cutoff:4100, resonance:3.8, delayTime:9, delayFeedback:39, ambient:true, delayOn:true},
+  ritual: {bpm:48, swing:14, human:10, volume:28, density:42, space:64, scale:'dorian', root:'A', cutoff:980, resonance:5.2, delayTime:7, delayFeedback:43, ambient:true, delayOn:true}
+};
+document.querySelectorAll('[data-vibe]').forEach(b => b.addEventListener('click', () => {
+  const v = atmospheres[b.dataset.vibe]; if (!v) return;
+  for (const id of ['tempo','swing','human','volume','density','space','resonance','delayTime','delayFeedback']) $(id).value = v[id];
+  $('scale').value = v.scale; $('root').value = v.root;
+  $('cutoff').value = cutToPos(v.cutoff);
+  $('ambient').checked = v.ambient; $('delayOn').checked = v.delayOn;
+  $('sync').checked = true; $('follow').checked = true; $('evolveAuto').checked = false;
+  randomize('star', true); randomize('aurora', true); syncInputs();
+  document.querySelectorAll('[data-vibe]').forEach(x => x.classList.toggle('primary', x === b));
+  toast(b.textContent.trim() + ' atmosphere loaded');
+}));
+
+['tempo','swing','human','volume','density','space','cutoff','resonance','delayTime','delayFeedback'].forEach(id => $(id).addEventListener('input', syncInputs));
+['scale','root','sync','follow','ambient','delayOn','evolveAuto','metronome'].forEach(id => $(id).addEventListener('change', syncInputs));
+
+document.querySelectorAll('[data-pattern]').forEach(b => b.addEventListener('click', () => {
+  const e = b.dataset.pattern, a = b.dataset.action;
+  if (a === 'random') randomize(e);
+  if (a === 'clear') clearPattern(e);
+  if (a === 'euclid') euclidean(e);
+  if (a === 'rotate') rotate(e);
+  if (a === 'mutate') mutate(e);
+  if (a === 'mute') { state.muted[e] = !state.muted[e]; refreshMuteButtons(); toast(NAMES[e] + (state.muted[e] ? ' muted' : ' unmuted')); }
+}));
+
+$('saveBtn').addEventListener('click', () => {
+  try { localStorage.setItem(PRESET_KEY, JSON.stringify(preset())); toast('Preset saved in this browser'); }
+  catch (e) { toast('Browser storage is unavailable here. Use Export settings instead'); }
+});
+$('loadBtn').addEventListener('click', () => {
+  let raw = null;
+  try { raw = localStorage.getItem(PRESET_KEY); } catch (e) { toast('Browser storage is unavailable here. Use Import settings instead'); return; }
+  if (!raw) { toast('No saved preset yet'); return; }
+  try { applyPreset(JSON.parse(raw)); toast('Preset loaded'); } catch (e) { toast('The saved preset could not be read'); }
+});
+$('exportBtn').addEventListener('click', exportSettings);
+$('importBtn').addEventListener('click', () => $('importFile').click());
+$('importFile').addEventListener('change', async e => {
+  const f = e.target.files[0]; if (!f) return;
+  try {
+    if (f.size > 200000) throw new Error('too large');
+    applyPreset(JSON.parse(await f.text())); toast('Preset imported');
+  } catch (err) { toast('That file is not a valid preset'); }
+  e.target.value = '';
+});
+$('recordBtn').addEventListener('click', toggleRecord);
+
+window.addEventListener('keydown', e => {
+  if (e.ctrlKey || e.metaKey || e.altKey || e.repeat) return;
+  const t = e.target, tag = (t && t.tagName) || '';
+  if (tag === 'INPUT' || tag === 'SELECT' || tag === 'TEXTAREA' || (t && t.isContentEditable)) return;
+  const k = (e.key || '').toLowerCase();
+  if (e.code === 'Space') { if (tag === 'BUTTON') return; e.preventDefault(); togglePlay(); }
+  else if (k === 'r') reset();
+  else if (k === 'e') evolveBoth();
+});
+
+document.addEventListener('visibilitychange', () => {
+  if (!document.hidden && state.playing && ctx && ctx.state !== 'running') ctx.resume().catch(() => {});
+});
+
+/* ───────────── boot ───────────── */
+ENGINES.forEach(buildGrid);
+syncInputs();
+refreshMuteButtons();
+requestAnimationFrame(frame);
+
+if (window.claude && typeof window.claude.use === 'function') {
+  publishedHost = true;
+  $('recordBtn').hidden = true; $('sigRecord').hidden = true;
+  $('scopeNote').textContent = 'Live waveform of the master output. Audio starts when you press Play. Settings stay in this browser.';
+  window.claude.use('downloads').then(cap => { downloadsCap = cap; }).catch(() => {});
+}
+})();
+</script>
+</body>
+</html>
