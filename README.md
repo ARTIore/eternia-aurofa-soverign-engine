@@ -9,3 +9,7 @@ Play it: https://artiais.com/eternia-aurofa-soverign-engine/
 To run it locally, open `index.html` in a browser.
 
 Part of the ARTIore ecosystem — [artiore.com](https://artiore.com)
+
+## License
+
+Released under the [MIT License](LICENSE).
